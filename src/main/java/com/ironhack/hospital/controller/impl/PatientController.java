@@ -4,8 +4,10 @@ import com.ironhack.hospital.controller.interfaces.IPatientController;
 import com.ironhack.hospital.dao.Doctor;
 import com.ironhack.hospital.dao.Patient;
 import com.ironhack.hospital.enums.Department;
+import com.ironhack.hospital.enums.Status;
 import com.ironhack.hospital.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,19 +19,20 @@ import java.util.Optional;
 
 
 @RestController
+@RequestMapping("patients")
 public class PatientController implements IPatientController {
 
     @Autowired
     private PatientRepository patientRepository;
 
 
-    @GetMapping("/patients")
+    @GetMapping()
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<Patient> getPatients(){
         return patientRepository.findAll();
     }
 
-    @GetMapping("/patients/{id}")
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Patient getById(@PathVariable(name = "id") Long patientId){
 
@@ -37,23 +40,36 @@ public class PatientController implements IPatientController {
         return optionalPatient.isPresent() ?optionalPatient.get() : null;
     }
 
-    @GetMapping("/patients/date")
+    @GetMapping("/between/{start}/{end}")
     @ResponseStatus(HttpStatus.OK)
-    public List<Patient> getByDateBetween(@RequestParam LocalDate date1, @RequestParam LocalDate date2){
+    public List<Patient> getByDateBetween(@PathVariable(name = "start") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start, @PathVariable(name = "end") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
 
-    return patientRepository.findByDateBetween(date1, date2);
+    return patientRepository.findByDateBetween(start, end);
     }
 
-//    @GetMapping("/patients/department")
-//    @ResponseStatus(HttpStatus.OK)
-//    public List<Patient> getByDepartment(@RequestParam Optional<String> department){
-//    if(department.isPresent()){
-//    return patientRepository.findByDepartment(Department.valueOf(department.get().toUpperCase()));
-//    }
-//    else{
-//        return null;
-//    }
-//    }
+    @GetMapping("/doctor/{department}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public List<Patient> getByDepartment(@PathVariable(name = "department") String department){
+    if(!department.isEmpty()){
+    return patientRepository.findByAdmittedByDepartment(department);
+    }
+    else{
+        return null;
+    }
+    }
+
+    @GetMapping("/doctor-status/{status}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public List<Patient> getByDoctorByStatus(@PathVariable(name = "status") String status){
+        if(!status.isEmpty()){
+            return patientRepository.findByAdmittedByStatus(Status.valueOf(status.toUpperCase()));
+        }
+        else {
+            return null;
+        }
+    }
+
+
 
 
 

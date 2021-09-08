@@ -1,5 +1,6 @@
 package com.ironhack.hospital.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ironhack.hospital.enums.Department;
 import com.ironhack.hospital.enums.Status;
 import lombok.*;
@@ -7,6 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,9 +23,7 @@ public class Doctor {
     @Column(name = "employee_id")
     private Long id;
 
-    @NotNull(message = "please enter a valid department")
-    @Enumerated(EnumType.STRING)
-    private Department department;
+    private String department;
 
     private String name;
 
@@ -31,8 +31,9 @@ public class Doctor {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToMany(mappedBy = "id")
-    private Set<Patient> patients;
+    @OneToMany(mappedBy = "admittedBy")
+    @JsonIgnore
+    private List<Patient> patients;
 
 
 }

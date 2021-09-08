@@ -30,6 +30,6 @@ public class Patient {
 
     @ManyToOne()
     @JoinColumn(name = "admitted_by")
-    private Doctor doctor;
+    private Doctor admittedBy;
 
 }

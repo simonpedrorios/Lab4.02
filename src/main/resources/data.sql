@@ -23,4 +23,9 @@ values ('Jaime Jordan','1984-03-02','564134'),
 	('Steve McDuck','1931-11-10','761527'),
 	('Marian Garcia','1999-02-15','172456');
     
+SELECT patient.name, patient.admitted_by, doctor.department FROM patient 
+INNER JOIN doctor ON doctor.employee_id = patient.admitted_by
+WHERE doctor.department = 'PSYCHIATRIC';
+    
+
 
